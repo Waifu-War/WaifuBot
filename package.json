@@ -1,0 +1,38 @@
+{
+  "name": "waifubot",
+  "version": "1.0.0",
+  "description": "TypeScript bot discord for WaifuWarServer",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "start:dev": "ts-node-dev src/index.ts",
+    "start:prod": "node dist/index.js",
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Waifu-War/WaifuBot.git"
+  },
+  "keywords": [
+    "discord"
+  ],
+  "author": "BastienBoymond",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Waifu-War/WaifuBot/issues"
+  },
+  "homepage": "https://github.com/Waifu-War/WaifuBot#readme",
+  "dependencies": {
+    "discord.js": "^13.3.1",
+    "dotenv": "^10.0.0",
+    "glob": "^7.2.0"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/node": "^16.11.13",
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.4"
+  }
+}
