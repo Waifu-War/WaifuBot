@@ -7,7 +7,14 @@ export class WaifuService {
     constructor() {}
 
     async getAllWaifus(): Promise<Waifu[]> {
-        const response = await axios.get('http://51.178.17.93:3000' + "/waifu");
+        const response = await axios.get(process.env.APIURL + "/waifu");
         return response.data as Waifu[];
+    }
+
+    async addWaifu(newWaifu: Waifu): Promise<void> {
+        const response = await axios.post(process.env.APIURL + "/waifu", newWaifu);
+        if (response.data !== "Waifu created") {
+            throw new Error("Error while creating waifu");
+        }
     }
 }
