@@ -1,5 +1,7 @@
 import { ButtonInteraction, Client, Interaction, MessageEmbed } from "discord.js";
 import { Waifu } from "../classes/waifu";
+import { createChannel } from "../createChannel/createChannel";
+import { CreateRole } from "../createRoles/createRoles";
 import { WaifuService } from "../services/waifu";
 
 export class InteractionBot {
@@ -18,9 +20,11 @@ export class InteractionBot {
         });
     }
 
-    acceptWaifu(interaction: ButtonInteraction) {
+    async acceptWaifu(interaction: ButtonInteraction) {
         if (interaction.customId === "createWaifu") {
+            const createChannelService = new createChannel()
             let newWaifu: Waifu = new Waifu();
+            let createRolesService = new CreateRole();
             let interractionMessage = interaction.message.embeds[0];
             let description = interractionMessage.description.split("\n");
             newWaifu.nickname = interractionMessage.title;
@@ -42,6 +46,11 @@ export class InteractionBot {
             this.deleteMessage(interaction);
             interaction.channel.send(`${interaction.message.embeds[0].title} created !`);
             this.waifuService.addWaifu(newWaifu);
+            await createRolesService.createRole(interaction.guild, `${newWaifu.nickname}`, "#000000");
+            if (!interaction.guild.roles.cache.find(role => role.name === newWaifu.manga)) {
+                await createRolesService.createRole(interaction.guild, `${newWaifu.manga}`, "#000000");
+            }
+            createChannelService.createWaifuCategory(interaction.guild, `${newWaifu.nickname}`, newWaifu.manga);
         }
     }
 

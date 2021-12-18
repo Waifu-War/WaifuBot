@@ -60,7 +60,7 @@ export class MessageBot {
                 } else {
                     embed = this.embed.createEmbed("Success", null, "The waifu has been sent for verification", 0x006400, null, 'Bot created by Bastien#0147', true);
                     message.channel.send({embeds: [embed]});
-                    const waifuVerif =  message.guild.channels.cache.find(channel => channel.name === "waifu-verification");
+                    const waifuVerif =  message.guild.channels.cache.find(channel => channel.name.includes("waifu-verification"));
                     if (waifuVerif.isText()) {
                         embed = this.embed.createEmbed(waifu.nickname, waifu.img, `Firstname: ${waifu.firstname}\nLastname: ${waifu.lastname}\nAge: ${waifu.age}\nManga: ${waifu.manga}`, 0x006400, null, 'Idea proposed by ' + waifu.firstIdea, true);
                         let acceptButton = new MessageActionRow().addComponents(this.button.createButton('Create this waifu', null, 'SUCCESS', 'createWaifu')).addComponents(this.button.createButton('Refuse this waifu', null, 'DANGER', 'refuseWaifu'));
