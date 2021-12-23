@@ -1,14 +1,16 @@
 import { ButtonInteraction, Client, Interaction, MessageEmbed } from "discord.js";
 import { Waifu } from "../classes/waifu";
 import { createChannel } from "../createChannel/createChannel";
-import { CreateRole } from "../createRoles/createRoles";
+import { CreateRole } from "../services/createRoles";
 import { WaifuService } from "../services/waifu";
+import { EasyDelete } from "../services/delete";
 
 export class InteractionBot {
     client: Client;
 
     constructor(client: Client, 
-                private waifuService: WaifuService) {
+                private waifuService: WaifuService,
+                private easyDelete: EasyDelete) {
         this.client = client;
     }
 
@@ -43,7 +45,7 @@ export class InteractionBot {
                     newWaifu.manga = line.replace("manga:", "").trim();
                 }
             });
-            this.deleteMessage(interaction);
+            this.easyDelete.deleteMessageByInteraction(interaction);
             interaction.channel.send(`${interaction.message.embeds[0].title} created !`);
             this.waifuService.addWaifu(newWaifu);
             await createRolesService.createRole(interaction.guild, `${newWaifu.nickname}`, "#000000");
@@ -56,15 +58,8 @@ export class InteractionBot {
 
     refuseWaifu(interaction: ButtonInteraction) {
         if (interaction.customId === "refuseWaifu") {
-            this.deleteMessage(interaction);
+            this.easyDelete.deleteMessageByInteraction(interaction);
             interaction.channel.send(`${interaction.message.embeds[0].title} refused !`);
         }
     }
-
-    deleteMessage(interaction: ButtonInteraction) {
-        interaction.channel.messages.fetch(interaction.message.id).then(message => {
-            message.delete();
-        });
-    }
-
 }

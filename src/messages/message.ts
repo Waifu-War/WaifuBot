@@ -1,9 +1,8 @@
-import { channel } from "diagnostics_channel";
-import { Client, Message, MessageActionRow, MessageEmbed } from "discord.js";
-import { Agent } from "http";
-import { EasyButton } from "../buttons/buttons";
+import { Client, Message, MessageActionRow, MessageEmbed, TextChannel } from "discord.js";
+import { EasyButton } from "../services/buttons";
 import { Waifu } from "../classes/waifu";
 import { EasyEmbed } from "../services/embedDiscord";
+import { EasyDelete } from "../services/delete";
 
 // Class StartBot qui permet de faire des choses au lancement du bot
 export class MessageBot {
@@ -11,7 +10,8 @@ export class MessageBot {
 
     constructor(client: Client, 
                 private embed: EasyEmbed,
-                private button: EasyButton) {
+                private button: EasyButton,
+                private easyDelete: EasyDelete) {
         this.client = client;
     }
 
@@ -24,13 +24,41 @@ export class MessageBot {
             lines.shift();
             const command = args.shift().toLowerCase();
             this.createWaifu(command, lines, message);
+            this.clearChannel(command, message, args);
         });
+    }
+
+    clearChannel(command: string, message: Message, args: string[]) {
+        if (message.member.permissions.has("MANAGE_MESSAGES")) {
+        if (args.length < 1) this.easyDelete.deleteMessageByMessage(message);
+        let channel = message.channel as TextChannel;
+        let ammount = parseInt(args[0]);
+            if (command === "clear") {
+                if (ammount > 100) {
+                    this.easyDelete.deleteMessageByMessage(message);
+                    let embed: MessageEmbed;
+                    embed = this.embed.createEmbed("Error", null, "You can't delete more than 100 messages", 0xFF0000, null, 'Bot created by Bastien#0147', true);
+                    message.author.send({embeds: [embed]});
+                } else {
+                    this.easyDelete.deleteAmountOfMessages(ammount, channel);
+                    let embed: MessageEmbed;
+                    embed = this.embed.createEmbed("Success", null, `${ammount} message(s) have been deleted`, 0x006400, null, 'Bot created by Bastien#0147', true);
+                    message.author.send({embeds: [embed]});
+                }
+            }
+        } else {
+            this.easyDelete.deleteMessageByMessage(message);
+            let embed: MessageEmbed;
+            embed = this.embed.createEmbed("Error", null, "You don't have the permission to do that", 0xFF0000, null, 'Bot created by Bastien#0147', true);
+            message.author.send({embeds: [embed]});
+        }
     }
 
     // function contenant la fonction de création de waifu
     createWaifu(command: string, lines: string[], message: Message) {
         let waifu: Waifu = new Waifu();
-        if (command === "addwaifu") {
+        let channel = message.channel as TextChannel;
+        if (command === "addwaifu" && channel.name.toLowerCase().includes("create-waifu")) {
             let embed: MessageEmbed;
             if (lines.length === 0) {
                 embed = this.embed.createEmbed("Error", null, "You need to follow the pinned exemple", 0xFF0000, null, 'Bot created by Bastien#0147', true);
@@ -70,6 +98,11 @@ export class MessageBot {
                 }
             }
             
+        } else if (command === "addwaifu") {
+            this.easyDelete.deleteMessageByMessage(message);
+            let embed: MessageEmbed;
+            embed = this.embed.createEmbed("Error", null, "You need to send your waifu in chanel create-waifu", 0xFF0000, null, 'Bot created by Bastien#0147', true);
+            message.author.send({embeds: [embed]});
         }
     }
 

@@ -5,8 +5,9 @@ import { StartBot } from './onStart/startBot'; // Import the StartBot class
 import { MessageBot } from './messages/message'; // Import the MessageBot class
 import { WaifuService } from './services/waifu'; // Import the WaifuService class
 import { EasyEmbed } from './services/embedDiscord';
-import { EasyButton } from './buttons/buttons';
+import { EasyButton } from './services/buttons';
 import { InteractionBot } from './interraction/interraction';
+import { EasyDelete } from './services/delete';
 
 // Discord Init
 const allIntents: Intents = new Intents([Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]); // Create a new Intents for correct permissions
@@ -17,8 +18,8 @@ const waifuService = new WaifuService(); // Create a new WaifuService
 
 // Discord Event Init
 const onStart = new StartBot(client); // Creation de la class StartBot qui contient l'event ready
-const messageAction = new MessageBot(client, new EasyEmbed, new EasyButton); // Creation de la class MessageBot qui contient l'event message du bot
-const interractionAction = new InteractionBot(client, new WaifuService); // Creation de la class InteractionBot qui contient l'event interractionCreate du bot
+const messageAction = new MessageBot(client, new EasyEmbed, new EasyButton, new EasyDelete); // Creation de la class MessageBot qui contient l'event message du bot
+const interractionAction = new InteractionBot(client, new WaifuService, new EasyDelete); // Creation de la class InteractionBot qui contient l'event interractionCreate du bot
 let allWaifu: Waifu[];
 
 waifuService.getAllWaifus().then(waifus => {
